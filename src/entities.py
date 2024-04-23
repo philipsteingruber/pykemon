@@ -23,10 +23,9 @@ class Player(pygame.sprite.Sprite):
             input_vector.x += 1
         self.direction = input_vector
 
-    def move(self, dt=100):
-        self.rect.center += self.direction * dt
-        print(self.rect.center)
+    def move(self, dt):
+        self.rect.center += self.direction * 250 * dt
 
-    def update(self):
+    def update(self, dt):
         self.input()
-        self.move()
+        self.move(dt)

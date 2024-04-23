@@ -13,8 +13,7 @@ class Game:
         pygame.init()
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('PYkémon')
-
-        pygame.key.set_repeat()
+        self.clock = pygame.time.Clock()
 
         self.all_sprites = pygame.sprite.Group()
 
@@ -40,9 +39,11 @@ class Game:
                     pygame.quit()
                     exit()
 
-                self.all_sprites.update()
-                self.all_sprites.draw(self.display_surface)
-                pygame.display.update()
+            dt = self.clock.tick() / 1000
+
+            self.all_sprites.update(dt)
+            self.all_sprites.draw(self.display_surface)
+            pygame.display.update()
 
 
 if __name__ == '__main__':
