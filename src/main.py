@@ -14,6 +14,8 @@ class Game:
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('PYkémon')
 
+        pygame.key.set_repeat()
+
         self.all_sprites = pygame.sprite.Group()
 
         self.tmx_maps = Game.import_maps()
@@ -27,6 +29,10 @@ class Game:
         for x, y, surf in tmx_map.get_layer_by_name('Terrain').tiles():
             Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
 
+        for obj in tmx_map.get_layer_by_name('Entities'):
+            if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
+                Player((obj.x, obj.y), self.all_sprites)
+
     def run(self) -> None:
         while True:
             for event in pygame.event.get():
@@ -34,6 +40,7 @@ class Game:
                     pygame.quit()
                     exit()
 
+                self.all_sprites.update()
                 self.all_sprites.draw(self.display_surface)
                 pygame.display.update()
 
