@@ -6,6 +6,7 @@ import pytmx
 from typing import Tuple
 from sprites import Sprite
 from entities import Player
+from groups import AllSprites
 
 
 class Game:
@@ -15,9 +16,11 @@ class Game:
         pygame.display.set_caption('PYkémon')
         self.clock = pygame.time.Clock()
 
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = AllSprites()
 
         self.tmx_maps = Game.import_maps()
+
+        self.player = None
         self.setup(self.tmx_maps['world'], 'house')
 
     @staticmethod
@@ -30,7 +33,7 @@ class Game:
 
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
-                Player((obj.x, obj.y), self.all_sprites)
+                self.player = Player((obj.x, obj.y), self.all_sprites)
 
     def run(self) -> None:
         while True:
@@ -42,7 +45,7 @@ class Game:
             dt = self.clock.tick() / 1000
 
             self.all_sprites.update(dt)
-            self.all_sprites.draw(self.display_surface)
+            self.all_sprites.draw(self.player)
             pygame.display.update()
 
 

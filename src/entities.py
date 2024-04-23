@@ -5,9 +5,10 @@ class Player(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = pygame.Surface((100, 100))
         self.image.fill('red')
-        self.rect = self.image.get_frect(topleft=pos)
+        self.rect = self.image.get_frect(center=pos)
 
         self.direction = vector()
+        self.speed = 250
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -24,7 +25,10 @@ class Player(pygame.sprite.Sprite):
         self.direction = input_vector
 
     def move(self, dt):
-        self.rect.center += self.direction * 250 * dt
+        print(self.rect.center)
+        self.rect.center += self.direction * self.speed * dt
+        print(self.rect.center)
+        print('lol')
 
     def update(self, dt):
         self.input()
