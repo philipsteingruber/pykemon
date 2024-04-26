@@ -1,13 +1,13 @@
-import pygame.display
-
-from settings import *
+import logging
 from sys import exit
+
+import pygame.display
 import pytmx
-from typing import Tuple
-from sprites import Sprite
+
 from entities import Player
 from groups import AllSprites
-import logging
+from sprites import Sprite, AnimatedSprite
+from support import *
 
 
 class Game:
@@ -23,6 +23,7 @@ class Game:
         self.all_sprites = AllSprites()
 
         self.tmx_maps = Game.import_maps()
+        self.overworld_assets = Game.import_overworld_assets()
 
         self.player = None
         self.setup(self.tmx_maps['world'], 'house')
@@ -32,6 +33,13 @@ class Game:
         return {
             'world': pytmx.util_pygame.load_pygame('../data/maps/world.tmx'),
             'hospital': pytmx.util_pygame.load_pygame('../data/maps/hospital.tmx')}
+
+    @staticmethod
+    def import_overworld_assets() -> dict[str: list[pygame.Surface]]:
+        return {
+            'water': import_folder('..', 'graphics', 'tilesets', 'water'),
+            'coast': coast_importer(24, 12, '..', 'graphics', 'tilesets', 'coast')
+        }
 
     def setup(self, tmx_map: pytmx.TiledMap, player_start_pos: str) -> None:
         for layer in ['Terrain', 'Terrain Top']:
@@ -44,6 +52,16 @@ class Game:
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player' and obj.properties['pos'] == player_start_pos:
                 self.player = Player((obj.x, obj.y), self.all_sprites)
+
+        for obj in tmx_map.get_layer_by_name('Water'):
+            for x in range(int(obj.x), int(obj.x + obj.width), TILE_SIZE):
+                for y in range(int(obj.y), int(obj.y + obj.height), TILE_SIZE):
+                    AnimatedSprite((x, y), self.overworld_assets['water'], self.all_sprites)
+
+        for obj in tmx_map.get_layer_by_name('Coast'):
+            terrain = obj.properties['terrain']
+            side = obj.properties['side']
+            AnimatedSprite((obj.x, obj.y), self.overworld_assets['coast'][terrain][side], self.all_sprites)
 
     def run(self) -> None:
         while True:

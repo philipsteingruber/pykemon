@@ -30,6 +30,17 @@ WORLD_LAYERS = {
 	'top': 4
 }
 
+TERRAIN_TYPES = [
+	'grass',
+	'grass_i',
+	'sand_i',
+	'sand',
+	'rock',
+	'rock_i',
+	'ice',
+	'ice_i'
+]
+
 BATTLE_POSITIONS = {
 	'left': {'top': (360, 260), 'center': (190, 400), 'bottom': (410, 520)},
 	'right': {'top': (900, 260), 'center': (1110, 390), 'bottom': (900, 550)}

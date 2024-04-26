@@ -1,7 +1,10 @@
+import pygame
+
 from settings import *
 from os.path import join
 from os import walk
 from pytmx.util_pygame import load_pygame
+from typing import Tuple
 
 
 def import_image(*path, alpha=True, format='png'):
@@ -52,3 +55,20 @@ def import_tilemap(cols, rows, *path):
             cutout_surf.blit(surf, (0, 0), cutout_rect)
             frames[(col, row)] = cutout_surf
     return frames
+
+
+def coast_importer(cols: int, rows: int, *path) -> dict[str: dict[Tuple[int, int]: list[pygame.Surface]]]:
+    frame_dict = import_tilemap(cols, rows, *path)
+    return_dict = {}
+
+    sides = {
+        'topleft': (0, 0), 'top': (1, 0), 'topright': (2, 0),
+        'left': (0, 1), 'right': (2, 1),
+        'bottomleft': (0, 2), 'bottom': (1, 2), 'bottomright': (2, 2)}
+
+    for index, terrain_type in enumerate(TERRAIN_TYPES):
+        return_dict[terrain_type] = {}
+        for key, pos in sides.items():
+            return_dict[terrain_type][key] = [frame_dict[(pos[0] + index * 3, pos[1] + row)] for row in range(0, rows, 3)]
+
+    return return_dict
