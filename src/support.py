@@ -57,6 +57,25 @@ def import_tilemap(cols, rows, *path):
     return frames
 
 
+def import_character(cols, rows, *path):
+    frame_dict = import_tilemap(cols, rows, *path)
+    return_dict = {}
+
+    for row, direction in enumerate(('down', 'left', 'right', 'up')):
+        return_dict[direction] = [frame_dict[(col, row)] for col in range(cols)]
+        return_dict[f'{direction}_idle'] = [frame_dict[(0, row)]]
+
+    return return_dict
+
+
+def import_all_characters(*path):
+    return_dict = {}
+    for _, __, image_names in walk(join(*path)):
+        for image_name in image_names:
+            image_name_without_extension = image_name.split('.')[0]
+            return_dict[image_name_without_extension] = import_character(4, 4, *path, image_name_without_extension)
+    return return_dict
+
 def coast_importer(cols: int, rows: int, *path) -> dict[str: dict[Tuple[int, int]: list[pygame.Surface]]]:
     frame_dict = import_tilemap(cols, rows, *path)
     return_dict = {}
